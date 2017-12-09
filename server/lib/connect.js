@@ -1,7 +1,7 @@
 /* eslint no-console: "off" */
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-const defaultUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/budget-tracker';
+const defaultUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/multi-n-back';
 
 module.exports = function(dbUri = defaultUri) {
     
