@@ -1,6 +1,7 @@
 /* eslint no-console: "off" */
 import mongoose from 'mongoose';
-mongoose.Promise = require('bluebird');
+import bluebird from 'bluebird';
+mongoose.Promise = bluebird;
 const defaultUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/multi-n-back';
 
 export default function(dbUri = defaultUri) {
