@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken-promisified';
 const appSecret = process.env.APP_SECRET || 'changeme';
 
-module.exports = {
+export default {
     sign(user) {
         const payload = {
             id: user._id

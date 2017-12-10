@@ -1,6 +1,6 @@
 import tokenService from './token-service';
 
-module.exports = function() {
+export default function() {
     (req, res, next) => {
         const token = req.get('Authorization') || req.get('authorization');
         tokenService.verify(token)
@@ -12,4 +12,4 @@ module.exports = function() {
                 next({ code: 404, error: 'Not Authorized' });
             });
     };
-};
+}

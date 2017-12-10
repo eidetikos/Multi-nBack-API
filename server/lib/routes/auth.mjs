@@ -1,5 +1,4 @@
 import User from '../models/user';
-import bodyParser from 'body-parser';
 import tokenService from '../utils/token-service';
 import ensureAuth from '../utils/ensure-auth';
 import express from 'express';
@@ -21,7 +20,7 @@ router
         res.send({ verified: true });
     })
 
-    .post('/signup', bodyParser, hasUniqueNameAndPassword, (req, res, next) => {
+    .post('/signup', hasUniqueNameAndPassword, (req, res, next) => {
         const { name, password } = req.body;
         delete req.body.password;
 
@@ -37,7 +36,7 @@ router
             .catch(next);
     })
 
-    .post('/signin', bodyParser, hasUniqueNameAndPassword, (req, res, next) => {
+    .post('/signin', hasUniqueNameAndPassword, (req, res, next) => {
         const { name, password } = req.body;
         delete req.body.password;
 
@@ -53,4 +52,4 @@ router
             .catch(next);
     });
 
-module.exports = router;
+export default router;
