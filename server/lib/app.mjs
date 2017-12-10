@@ -1,9 +1,9 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import redirectHttp from './redirect-http';
-import errorHandler from './error-handler';
-import checkDb from './check-connection';
+import redirectHttp from './utils/redirect-http';
+import errorHandler from './utils/error-handler';
+import checkDb from './utils/check-connection';
 const app = express();
 
 // ### Middleware ### //
