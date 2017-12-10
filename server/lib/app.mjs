@@ -19,9 +19,11 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 // ### Required Routes ### //
+import auth from './routes/auth';
 
 
 // ### Used Routes ### //
+app.use('/api/auth', auth);
 
 
 // ### Catchers ### //
