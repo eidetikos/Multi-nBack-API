@@ -4,13 +4,12 @@
   "description": "back end server for multi-back-app",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint --ext '.mjs, .js' .",
     "pretest": "npm run lint",
-    "test": "npm run -s mocha -- ./server/test",
-    "mocha": "mocha --recursive",
-    "test:dev": "nodemon --ext '.mjs, .js, .json' --experimental-modules --exec \"npm run -s mocha -- ./server/test\"",
-    "start": "node --experimental-modules server.mjs",
-    "start:dev": "nodemon --ext '.mjs, .js, .json' --experimental-modules server.mjs"
+    "test": "mocha --require @std/esm --reporter nyan server/test{/**,}/*.{mjs,js}",
+    "test:watch": "nodemon --ext '.mjs, .js' --experimental-modules --exec 'npm run test'",
+    "start": "node --experimental-modules server",
+    "start:watch": "nodemon --ext '.mjs, .js' --experimental-modules server"
   },
   "repository": {
     "type": "git",
@@ -23,6 +22,7 @@
   },
   "homepage": "https://github.com/eidetikos/multi-n-back-api#readme",
   "devDependencies": {
+    "@std/esm": "^0.18.0",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
     "eslint": "^4.13.0",
