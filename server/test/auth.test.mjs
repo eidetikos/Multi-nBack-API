@@ -35,4 +35,14 @@ describe('Auth TESTS', () => {
                 chai.assert.isOk(body.token);
             });
     });
+
+    it('rejects with a bad password', () => {
+        return request
+            .post('/api/auth/signin')
+            .send({ name: 'johnny', password: 'baaad' })
+            .then(() => { throw new Error('Unexpected successful response'); },
+                err => {
+                    chai.assert.equal(err.status, 401);
+                });
+    });
 });
