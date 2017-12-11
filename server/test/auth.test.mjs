@@ -26,4 +26,13 @@ describe('Auth TESTS', () => {
             .then(() => { throw new Error('Name already in use'); },
                 err => { chai.assert.equal(err.status, 400); });
     });
+
+    it('tests signin with same credentials', () => {
+        return request
+            .post('/api/auth/signin')
+            .send({ name: 'johnny', password: 'please' })
+            .then(({ body }) => {
+                chai.assert.isOk(body.token);
+            });
+    });
 });
