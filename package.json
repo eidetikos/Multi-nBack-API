@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint --ext '.mjs, .js' .",
     "pretest": "npm run lint",
-    "test": "mocha --require @std/esm --reporter nyan server/test{/**,}/*.{mjs,js}",
+    "test": "mocha --require @std/esm --reporter nyan server/test{/**,}/*.test.{mjs,js}",
     "test:watch": "nodemon --ext '.mjs, .js' --experimental-modules --exec 'npm run test'",
     "start": "node --experimental-modules server",
     "start:watch": "nodemon --ext '.mjs, .js' --experimental-modules server"
