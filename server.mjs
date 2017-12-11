@@ -1,6 +1,6 @@
 import http from 'http';
 import app from  './server/lib/app';
-import connect from  './server/lib/connect';
+import connect from  './server/lib/utils/connect';
 
 connect();
 
