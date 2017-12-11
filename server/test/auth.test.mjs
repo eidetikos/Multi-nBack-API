@@ -1,13 +1,22 @@
-// import request from './request';
+import request from './request';
 import db from './db';
-// import { assert } from 'chai';
+// import { request } from 'https';
+import chai  from 'chai';
 
 describe('Auth TESTS', () => {
 
     beforeEach(() => db.drop);
 
-    it('tests mjs', () => {
+    let token = null;
+    beforeEach(() => {
+        return request  
+            .post('/api/auth/signup')
+            .send({ name: 'kate', password: 'please' })
+            .then(({ body }) => token = body.token);
+    });
 
+    it('tests signup', () => {
+        chai.assert.ok(token);
     });
   
 });
