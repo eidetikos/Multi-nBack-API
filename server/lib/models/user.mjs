@@ -11,7 +11,9 @@ const schema = new Schema({
     name: RequiredString,
     hash: RequiredString,
     gameLog: [{
-        type: Schema.Types.ObjectId, ref: 'Game'
+        type: Schema.Types.ObjectId, 
+        ref: 'Game',
+        required: true
     }]
 });
 
