@@ -10,7 +10,9 @@ const RequiredString = {
 const schema = new Schema({
     name: RequiredString,
     hash: RequiredString,
-    gameLog: []
+    gameLog: [{
+        type: Schema.Types.ObjectId, ref: 'Game'
+    }]
 });
 
 schema.static('exists', function(query){
