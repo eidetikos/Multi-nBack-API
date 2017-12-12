@@ -4,8 +4,9 @@ import ensureAuth from '../utils/ensure-auth';
 import express from 'express';
 
 const router = express.Router()
-    .post('/', ensureAuth(), (req, res, next) => {
-        console.log(req.body)
+    .post('/', ensureAuth, (req, res, next) => {
+        console.log(req.body);
+        req.body.difficulty = req.body.difficulty.difficulty;
         new Game(req.body).save()
             .then(game => {
                 return User.findByIdAndUpdate(
@@ -14,7 +15,7 @@ const router = express.Router()
                     { new: true }
                 )
                     .then(user => {
-                        res.send({ game, user })
+                        res.send({ game, user });
                     });
             })
             .catch(next);
@@ -24,7 +25,7 @@ const router = express.Router()
             .then(games => res.send(games))
             .catch(next);
     })
-    .get('/users', ensureAuth(), (req, res, next) => {
+    .get('/users', ensureAuth, (req, res, next) => {
         User.findById(req.user.id)
             .populate('gameLog')
             .select('gameLog')
@@ -35,3 +36,5 @@ const router = express.Router()
 ;
 
 export default router;
+
+// function modifyData()
