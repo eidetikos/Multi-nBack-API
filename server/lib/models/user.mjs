@@ -14,7 +14,12 @@ const schema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'Game',
         required: true
-    }]
+    }],
+    demographics: {
+        age: Number,
+        country: String,
+        gender: String
+    }
 });
 
 schema.static('exists', function(query){
