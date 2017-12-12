@@ -1,6 +1,5 @@
 import request from './request';
 import db from './db';
-// import { request } from 'https';
 import chai  from 'chai';
 
 describe('Auth TESTS', () => {
@@ -8,6 +7,7 @@ describe('Auth TESTS', () => {
     beforeEach(db.drop);
 
     let token = null;
+
     beforeEach(() => {
         return request  
             .post('/api/auth/signup')
@@ -44,5 +44,21 @@ describe('Auth TESTS', () => {
                 err => {
                     chai.assert.equal(err.status, 401);
                 });
+    });
+
+    it('gets payload', () => {
+        return request
+            .get('/api/auth/verify')
+            .set('Authorization', token)
+            .then(() => chai.assert.ok(1));
+    });
+
+    it('gets a user by id', () => {
+        return request
+            .get('/api/auth/')
+            .set('Authorization', token)
+            .then(body => {
+                chai.assert.equal(body._id, token.id);
+            });
     });
 });

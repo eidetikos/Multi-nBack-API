@@ -16,7 +16,7 @@ function hasUniqueNameAndPassword(req, res, next) {
 }
 
 router
-    .get('/verify', ensureAuth, (req, res) => {
+    .get('/verify', ensureAuth(), (req, res) => {
         res.send({ verified: true });
     })
 
@@ -50,6 +50,17 @@ router
             .then(user => tokenService.sign(user))
             .then(token => res.send({ token }))
             .catch(next);
+    })
+
+    .get('/', ensureAuth(), (req, res, next) => {
+        User.findById(req.user.id)
+            .select('-hash')
+            .lean()
+            .then(user => {
+                res.send(user);
+            })
+            .catch(next);
     });
+
 
 export default router;
