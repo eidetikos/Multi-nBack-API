@@ -42,7 +42,6 @@
     "now": "^8.5.4"
   },
   "now": {
-    "name": "multi-n-back-api",
     "alias": "multi-n-back-api.now.sh",
     "dotenv": true
   }
