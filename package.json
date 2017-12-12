@@ -4,13 +4,12 @@
   "description": "back end server for multi-back-app",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint --ext '.mjs, .js' .",
     "pretest": "npm run lint",
-    "test": "npm run -s mocha -- ./server/test",
-    "mocha": "mocha --recursive",
-    "test:dev": "nodemon --ext '.mjs, .js, .json' --experimental-modules --exec \"npm run -s mocha -- ./server/test\"",
-    "start": "node --experimental-modules server.mjs",
-    "start:dev": "nodemon --ext '.mjs, .js, .json' --experimental-modules server.mjs"
+    "test": "mocha --require @std/esm --reporter nyan server/test{/**,}/*.test.{mjs,js}",
+    "test:watch": "nodemon --ext '.mjs, .js' --experimental-modules --exec 'npm run test'",
+    "start": "node --experimental-modules server",
+    "start:watch": "nodemon --ext '.mjs, .js' --experimental-modules server"
   },
   "repository": {
     "type": "git",
@@ -22,17 +21,22 @@
     "url": "https://github.com/eidetikos/multi-n-back-api/issues"
   },
   "homepage": "https://github.com/eidetikos/multi-n-back-api#readme",
-  "devDependencies": {},
-  "dependencies": {
-    "bluebird": "^3.5.1",
+  "devDependencies": {
+    "@std/esm": "^0.18.0",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
-    "cors": "^2.8.4",
     "eslint": "^4.13.0",
-    "express": "^4.16.2",
     "mocha": "^4.0.1",
-    "mongoose": "^4.13.6",
-    "morgan": "^1.9.0",
     "nodemon": "^1.12.5"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.1",
+    "cors": "^2.8.4",
+    "jsonwebtoken-promisified": "^1.0.3",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.6",
+    "morgan": "^1.9.0"
   }
 }
