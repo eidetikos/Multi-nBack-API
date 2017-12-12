@@ -4,6 +4,7 @@
   "description": "back end server for multi-back-app",
   "main": "index.js",
   "scripts": {
+    "deploy": "now --public && now alias",
     "lint": "eslint --ext '.mjs, .js' .",
     "pretest": "npm run lint",
     "test": "mocha --require @std/esm --reporter nyan server/test{/**,}/*.test.{mjs,js}",
@@ -30,13 +31,19 @@
     "nodemon": "^1.12.5"
   },
   "dependencies": {
-    "body-parser": "^1.15.2",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.1",
+    "body-parser": "^1.15.2",
     "cors": "^2.8.4",
-    "jsonwebtoken-promisified": "^1.0.3",
     "express": "^4.16.2",
+    "jsonwebtoken-promisified": "^1.0.3",
     "mongoose": "^4.13.6",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "now": "^8.5.4"
+  },
+  "now": {
+    "name": "multi-n-back-api",
+    "alias": "multi-n-back-api.now.sh",
+    "dotenv": true
   }
 }
