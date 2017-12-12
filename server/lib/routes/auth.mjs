@@ -17,7 +17,7 @@ function hasUniqueNameAndPassword(req, res, next) {
 }
 
 router
-    .get('/verify', ensureAuth(), (req, res) => {
+    .get('/verify', ensureAuth, (req, res) => {
         res.send({ verified: true });
     })
 
@@ -53,7 +53,7 @@ router
             .catch(next);
     })
 
-    .get('/', ensureAuth(), (req, res, next) => {
+    .get('/', ensureAuth, (req, res, next) => {
         User.findById(req.user.id)
             .select('-hash')
             .lean()
