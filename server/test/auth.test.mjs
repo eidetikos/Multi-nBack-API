@@ -10,7 +10,7 @@ describe('Auth TESTS', () => {
 
     beforeEach(() => {
         return request  
-            .post('/api/auth/signup')
+            .post('/auth/signup')
             .send({ name: 'johnny', password: 'please' })
             .then(({ body }) => token = body.token);
     });
@@ -21,7 +21,7 @@ describe('Auth TESTS', () => {
     
     it('returns error for name already in use', () => {
         return request
-            .post('/api/auth/signup')
+            .post('/auth/signup')
             .send({ name: 'johnny', password: 'please' })
             .then(() => { throw new Error('Name already in use'); },
                 err => { chai.assert.equal(err.status, 400); });
@@ -29,7 +29,7 @@ describe('Auth TESTS', () => {
 
     it('tests signin with same credentials', () => {
         return request
-            .post('/api/auth/signin')
+            .post('/auth/signin')
             .send({ name: 'johnny', password: 'please' })
             .then(({ body }) => {
                 chai.assert.isOk(body.token);
@@ -38,7 +38,7 @@ describe('Auth TESTS', () => {
 
     it('rejects with a bad password', () => {
         return request
-            .post('/api/auth/signin')
+            .post('/auth/signin')
             .send({ name: 'johnny', password: 'baaad' })
             .then(() => { throw new Error('Unexpected successful response'); },
                 err => {
@@ -48,14 +48,14 @@ describe('Auth TESTS', () => {
 
     it('gets payload', () => {
         return request
-            .get('/api/auth/verify')
+            .get('/auth/verify')
             .set('Authorization', token)
             .then(() => chai.assert.ok(1));
     });
 
     it('gets a user by id', () => {
         return request
-            .get('/api/auth/')
+            .get('/auth/')
             .set('Authorization', token)
             .then(body => {
                 chai.assert.equal(body._id, token.id);
