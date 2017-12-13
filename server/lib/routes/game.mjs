@@ -43,8 +43,7 @@ function modifyData(game) {
 
     const avgN = Math.floor(game.sequences.reduce((a,b) => a + b.nBack, 0) / game.sequences.length *100) / 100;
     const highN = game.sequences.sort((a,b) => b.nBack - a.nBack);
-
-    game.difficulty = game.difficulty.difficulty;
+    
     game.avgN = avgN;
     game.highN = highN[0].nBack;
 
