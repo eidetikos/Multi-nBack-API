@@ -32,8 +32,13 @@ router
                 user.generateHash(password);
                 return user.save();
             })
-            .then(user => tokenService.sign(user))
-            .then(token => res.send({ token }))
+            .then(user => {
+                return tokenService.sign(user)
+                    .then(token => {
+                        user.hash = null;
+                        res.send({ token, user });
+                    });
+            })
             .catch(next);
     })
 
@@ -48,8 +53,13 @@ router
                 }
                 return user;
             })
-            .then(user => tokenService.sign(user))
-            .then(token => res.send({ token }))
+            .then(user => {
+                return tokenService.sign(user)
+                    .then(token => {
+                        user.hash = null;
+                        res.send({ token, user });
+                    });
+            })
             .catch(next);
     })
 
