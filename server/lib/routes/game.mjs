@@ -5,11 +5,7 @@ import express from 'express';
 
 const router = express.Router()
     .post('/', ensureAuth, (req, res, next) => {
-        console.log('THIS IS GAME ROUTE POST req.body: ', req.body);
-        modifyData(req.body);
-        console.log('MOOOOOODDDDIFY DATA',modifyData(req.body));
-
-        new Game(req.body).save()
+        Game.create(modifyData(req.body))
             .then(game => {
                 console.log('GAMMEEEEEE',game);
                 return User.findByIdAndUpdate(
@@ -40,8 +36,18 @@ const router = express.Router()
 
 export default router;
 
+
+// Helper function: 
+// changes difficulty prop to display corresponding string instead of object
+// Calculates avgN and highestN back, and sets their prop with the new calculated data
 function modifyData(game) {
-    game.difficulty = game.difficulty.difficulty;
+
     const avgN = Math.floor(game.sequences.reduce((a,b) => a + b.nBack, 0) / game.sequences.length *100) / 100;
+    const highN = game.sequences.sort((a,b) => b.nBack - a.nBack);
+
+    game.difficulty = game.difficulty.difficulty;
     game.avgN = avgN;
+    game.highN = highN[0].nBack;
+
+    return game;
 }
