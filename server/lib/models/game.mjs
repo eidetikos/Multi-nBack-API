@@ -18,7 +18,7 @@ const schema = new Schema({
             position: Number,
             color: String,
             number: Number,
-            audio: Number,
+            audio: String,
             shape: String
         }],
         interval: Number,
