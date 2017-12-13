@@ -7,7 +7,7 @@ const router = express.Router()
     .post('/', ensureAuth, (req, res, next) => {
         Game.create(modifyData(req.body))
             .then(game => {
-                console.log('GAMMEEEEEE',game);
+                console.log('GAMMEEEEEE',game); // leaving this in for now.
                 return User.findByIdAndUpdate(
                     req.user.id, 
                     { $push: { gameLog: game._id } }, 
@@ -24,7 +24,6 @@ const router = express.Router()
             .catch(next);
     })
     .get('/users', ensureAuth, (req, res, next) => {
-        console.log('game route /GET user: ', req.user);
         User.findById(req.user.id)
             .populate('gameLog')
             .select('gameLog')
