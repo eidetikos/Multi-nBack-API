@@ -24,6 +24,8 @@ const schema = new Schema({
         interval: Number,
         fatal: false
     }]
+}, {
+    timestamps: { timestamp: 'created_at' }
 });
 
 export default mongoose.model('Game', schema);
