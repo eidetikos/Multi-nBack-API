@@ -21,331 +21,655 @@ const schema = new Schema({
         gender: String
     }
 });
-
-schema.static('exists', function(query){
-    return this.find(query)
-        .count()
-        .then(count => (count > 0));
-});
-
-schema.method('generateHash', function(password) {
-    this.hash = bcrypt.hashSync(password, 7);
-});
-
-schema.method('comparePassword', function(password) {
-    return bcrypt.compareSync(password, this.hash);
-});
-
-schema.statics.mostSequencesByUser = function() {
-    const aggregation = [
-        {
-            $lookup: {
-                from: 'games',
-                localField: 'gameLog',
-                foreignField: '_id',
-                as: 'gameLog'
-            }
-        },
-        {
-            $unwind: '$gameLog',
-        },
-        {
-            $unwind: '$gameLog.sequences'
-        },
-        {
-            $project: {
-                sequences: '$gameLog.sequences.fatal',
-                name: true,
-            }
-        },
-        {
-            $group: {
-                _id: '$name',
-                count: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $sort: {
-                count: -1
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                name: '$_id',
-                count: '$count'
-            }
+schema.loadClass(
+    class {
+        
+        generateHash(password) {
+            this.hash = bcrypt.hashSync(password, 7);
         }
-    ];
-    return this.aggregate(aggregation);
-};
+        
+        comparePassword(password) {
+            return bcrypt.compareSync(password, this.hash);
+        }
+        
+        static exists(query) {
+            return this.find(query)
+                .count()
+                .then(count => (count > 0));
+        }
 
-schema.statics.highestNBackPerDifficulty = function() {
-    const aggregation = [
-        {
-            $lookup: {
-                from: 'games',
-                localField: 'gameLog',
-                foreignField: '_id',
-                as: 'gameLog'
-            }
-        },
-        {
-            $unwind: '$gameLog'
-        },
-        {
-            $unwind: '$gameLog.sequences'
-        },
-        {
-            $project: {
-                _id: false,
-                name: true,
-                difficulty: '$gameLog.difficulty',
-                nBack: '$gameLog.sequences.nBack'
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    name: '$name',
-                    difficulty: '$difficulty'
+        static mostSequencesByUser() {
+            return this.aggregate([
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
                 },
-                maxN: {
-                    $max: '$nBack'
-                }
-            }
-        },
-        {
-            $sort: {
-                maxN: -1
-            }
-        },
-        {
-            $group: {
-                _id: '$_id.difficulty',
-                leaderboard: {
-                    $push: {
-                        name: '$_id.name',
-                        maxN: '$maxN'
+                {
+                    $unwind: '$gameLog',
+                },
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $project: {
+                        sequences: '$gameLog.sequences.fatal',
+                        name: true,
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$name',
+                        count: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        count: -1
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        name: '$_id',
+                        count: '$count'
                     }
                 }
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                difficulty: '$_id' ,
-                leaderboard: true
-            }
+            ]);
         }
-    ];
-    return this.aggregate(aggregation);
-};
 
-schema.statics.topScoresPerDifficulty = function() {
-    const aggregation = [
-        {
-            $lookup: {
-                from: 'games',
-                localField: 'gameLog',
-                foreignField: '_id',
-                as: 'gameLog'
-            }
-        },
-        {
-            $unwind: '$gameLog' 
-        },
-        {
-            $unwind: '$gameLog.sequences'
-        },
-        {
-            $match: {
-                'gameLog.sequences.fatal': false
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                game: '$gameLog._id',
-                name: true,
-                difficulty: '$gameLog.difficulty'
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    name: '$name',
-                    difficulty: '$difficulty',
-                    game: '$game'
+        static highestNBackPerDifficulty() {
+            return this.aggregate([
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
                 },
-                score: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    name: '$_id.name',
-                    difficulty: '$_id.difficulty'
+                {
+                    $unwind: '$gameLog'
                 },
-                highestScore: {
-                    $max: '$score'
-                }
-            }
-        },
-        {
-            $sort: {
-                highestScore: -1
-            }
-        },
-        {
-            $group: {
-                _id: '$_id.difficulty',
-                leaderboard: {
-                    $push: {
-                        name: '$_id.name',
-                        highestScore: '$highestScore'
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $project: {
+                        _id: false,
+                        name: true,
+                        difficulty: '$gameLog.difficulty',
+                        nBack: '$gameLog.sequences.nBack'
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            name: '$name',
+                            difficulty: '$difficulty'
+                        },
+                        maxN: {
+                            $max: '$nBack'
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        maxN: -1
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id.difficulty',
+                        leaderboard: {
+                            $push: {
+                                name: '$_id.name',
+                                maxN: '$maxN'
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        difficulty: '$_id' ,
+                        leaderboard: true
                     }
                 }
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                difficulty: '$_id',
-                leaderboard: true
-            }
+            ]);
         }
-    ];
-    return this.aggregate(aggregation);
-};
 
-schema.statics.usersSequencesCompleted = function(id) {
+        static topScoresPerDifficulty() {
+            return this.aggregate([
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
+                },
+                {
+                    $unwind: '$gameLog' 
+                },
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $match: {
+                        'gameLog.sequences.fatal': false
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        game: '$gameLog._id',
+                        name: true,
+                        difficulty: '$gameLog.difficulty'
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            name: '$name',
+                            difficulty: '$difficulty',
+                            game: '$game'
+                        },
+                        score: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            name: '$_id.name',
+                            difficulty: '$_id.difficulty'
+                        },
+                        highestScore: {
+                            $max: '$score'
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        highestScore: -1
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id.difficulty',
+                        leaderboard: {
+                            $push: {
+                                name: '$_id.name',
+                                highestScore: '$highestScore'
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        difficulty: '$_id',
+                        leaderboard: true
+                    }
+                }
+            ]);
+        }
 
-    const aggregation = [
-        {
-            $match: {
-                _id: mongoose.Types.ObjectId(id)
-            }
-        },
-        {
-            $lookup: {
-                from: 'games',
-                localField: 'gameLog',
-                foreignField: '_id',
-                as: 'gameLog'
-            }
-        },
-        {
-            $unwind: '$gameLog' 
-        },
-        {
-            $unwind: '$gameLog.sequences'
-        },
-        {
-            $group: {
-                _id: null,
-                sequencesCompleted: {
-                    $sum: 1
+        static usersSequencesCompleted(id) {
+            return this.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
+                },
+                {
+                    $unwind: '$gameLog' 
+                },
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $group: {
+                        _id: null,
+                        sequencesCompleted: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        sequencesCompleted: true
+                    }
                 }
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                sequencesCompleted: true
-            }
+            ]);
         }
-    ];
-    return this.aggregate(aggregation);
-};
-schema.statics.usersMaxN = function(id) {
-    const aggregation = [
-        {
-            $match: {
-                _id: mongoose.Types.ObjectId(id)
-            }
-        },
-        {
-            $lookup: {
-                from: 'games',
-                localField: 'gameLog',
-                foreignField: '_id',
-                as: 'gameLog'
-            }
-        },
-        {
-            $unwind: '$gameLog' 
-        },
-        {
-            $unwind: '$gameLog.sequences'
-        },
-        {
-            $group: {
-                _id: null,
-                maxN: {
-                    $max: '$gameLog.sequences.nBack'
+
+        static usersMaxN(id) {
+            return this.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
+                },
+                {
+                    $unwind: '$gameLog' 
+                },
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $group: {
+                        _id: null,
+                        maxN: {
+                            $max: '$gameLog.sequences.nBack'
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        maxN: true
+                    }
                 }
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                maxN: true
-            }
+            ]);
         }
-    ];
-    return this.aggregate(aggregation);
-};
-schema.statics.usersTopScore = function(id) {
-    const aggregation = [
-        {
-            $match: {
-                _id: mongoose.Types.ObjectId(id)
-            }
-        },
-        {
-            $lookup: {
-                from: 'games',
-                localField: 'gameLog',
-                foreignField: '_id',
-                as: 'gameLog'
-            }
-        },
-        {
-            $unwind: '$gameLog' 
-        },
-        {
-            $unwind: '$gameLog.sequences'
-        },
-        {
-            $group: {
-                _id: '$gameLog._id',
-                score: {
-                    $sum: 1
+
+        static usersTopScore(id) {
+            return this.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
+                },
+                {
+                    $unwind: '$gameLog' 
+                },
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $group: {
+                        _id: '$gameLog._id',
+                        score: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        topScore: {
+                            $max: '$score'
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        topScore: true
+                    }
                 }
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                topScore: {
-                    $max: '$score'
-                }
-            }
-        },
-        {
-            $project: {
-                _id: false,
-                topScore: true
-            }
+            ]);
         }
-    ];
-    return this.aggregate(aggregation);
-};
+    }
+);
+
+// schema.static('exists', function(query){
+//     return this.find(query)
+//         .count()
+//         .then(count => (count > 0));
+// });
+
+// schema.method('generateHash', function(password) {
+//     this.hash = bcrypt.hashSync(password, 7);
+// });
+
+// schema.method('comparePassword', function(password) {
+//     return bcrypt.compareSync(password, this.hash);
+// });
+
+// schema.statics.mostSequencesByUser = function() {
+//     const aggregation = [
+//         {
+//             $lookup: {
+//                 from: 'games',
+//                 localField: 'gameLog',
+//                 foreignField: '_id',
+//                 as: 'gameLog'
+//             }
+//         },
+//         {
+//             $unwind: '$gameLog',
+//         },
+//         {
+//             $unwind: '$gameLog.sequences'
+//         },
+//         {
+//             $project: {
+//                 sequences: '$gameLog.sequences.fatal',
+//                 name: true,
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: '$name',
+//                 count: {
+//                     $sum: 1
+//                 }
+//             }
+//         },
+//         {
+//             $sort: {
+//                 count: -1
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 name: '$_id',
+//                 count: '$count'
+//             }
+//         }
+//     ];
+//     return this.aggregate(aggregation);
+// };
+
+// schema.statics.highestNBackPerDifficulty = function() {
+//     const aggregation = [
+//         {
+//             $lookup: {
+//                 from: 'games',
+//                 localField: 'gameLog',
+//                 foreignField: '_id',
+//                 as: 'gameLog'
+//             }
+//         },
+//         {
+//             $unwind: '$gameLog'
+//         },
+//         {
+//             $unwind: '$gameLog.sequences'
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 name: true,
+//                 difficulty: '$gameLog.difficulty',
+//                 nBack: '$gameLog.sequences.nBack'
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: {
+//                     name: '$name',
+//                     difficulty: '$difficulty'
+//                 },
+//                 maxN: {
+//                     $max: '$nBack'
+//                 }
+//             }
+//         },
+//         {
+//             $sort: {
+//                 maxN: -1
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: '$_id.difficulty',
+//                 leaderboard: {
+//                     $push: {
+//                         name: '$_id.name',
+//                         maxN: '$maxN'
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 difficulty: '$_id' ,
+//                 leaderboard: true
+//             }
+//         }
+//     ];
+//     return this.aggregate(aggregation);
+// };
+
+// schema.statics.topScoresPerDifficulty = function() {
+//     const aggregation = [
+//         {
+//             $lookup: {
+//                 from: 'games',
+//                 localField: 'gameLog',
+//                 foreignField: '_id',
+//                 as: 'gameLog'
+//             }
+//         },
+//         {
+//             $unwind: '$gameLog' 
+//         },
+//         {
+//             $unwind: '$gameLog.sequences'
+//         },
+//         {
+//             $match: {
+//                 'gameLog.sequences.fatal': false
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 game: '$gameLog._id',
+//                 name: true,
+//                 difficulty: '$gameLog.difficulty'
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: {
+//                     name: '$name',
+//                     difficulty: '$difficulty',
+//                     game: '$game'
+//                 },
+//                 score: {
+//                     $sum: 1
+//                 }
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: {
+//                     name: '$_id.name',
+//                     difficulty: '$_id.difficulty'
+//                 },
+//                 highestScore: {
+//                     $max: '$score'
+//                 }
+//             }
+//         },
+//         {
+//             $sort: {
+//                 highestScore: -1
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: '$_id.difficulty',
+//                 leaderboard: {
+//                     $push: {
+//                         name: '$_id.name',
+//                         highestScore: '$highestScore'
+//                     }
+//                 }
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 difficulty: '$_id',
+//                 leaderboard: true
+//             }
+//         }
+//     ];
+//     return this.aggregate(aggregation);
+// };
+
+// schema.statics.usersSequencesCompleted = function(id) {
+
+//     const aggregation = [
+//         {
+//             $match: {
+//                 _id: mongoose.Types.ObjectId(id)
+//             }
+//         },
+//         {
+//             $lookup: {
+//                 from: 'games',
+//                 localField: 'gameLog',
+//                 foreignField: '_id',
+//                 as: 'gameLog'
+//             }
+//         },
+//         {
+//             $unwind: '$gameLog' 
+//         },
+//         {
+//             $unwind: '$gameLog.sequences'
+//         },
+//         {
+//             $group: {
+//                 _id: null,
+//                 sequencesCompleted: {
+//                     $sum: 1
+//                 }
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 sequencesCompleted: true
+//             }
+//         }
+//     ];
+//     return this.aggregate(aggregation);
+// };
+// schema.statics.usersMaxN = function(id) {
+//     const aggregation = [
+//         {
+//             $match: {
+//                 _id: mongoose.Types.ObjectId(id)
+//             }
+//         },
+//         {
+//             $lookup: {
+//                 from: 'games',
+//                 localField: 'gameLog',
+//                 foreignField: '_id',
+//                 as: 'gameLog'
+//             }
+//         },
+//         {
+//             $unwind: '$gameLog' 
+//         },
+//         {
+//             $unwind: '$gameLog.sequences'
+//         },
+//         {
+//             $group: {
+//                 _id: null,
+//                 maxN: {
+//                     $max: '$gameLog.sequences.nBack'
+//                 }
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 maxN: true
+//             }
+//         }
+//     ];
+//     return this.aggregate(aggregation);
+// };
+// schema.statics.usersTopScore = function(id) {
+//     const aggregation = [
+//         {
+//             $match: {
+//                 _id: mongoose.Types.ObjectId(id)
+//             }
+//         },
+//         {
+//             $lookup: {
+//                 from: 'games',
+//                 localField: 'gameLog',
+//                 foreignField: '_id',
+//                 as: 'gameLog'
+//             }
+//         },
+//         {
+//             $unwind: '$gameLog' 
+//         },
+//         {
+//             $unwind: '$gameLog.sequences'
+//         },
+//         {
+//             $group: {
+//                 _id: '$gameLog._id',
+//                 score: {
+//                     $sum: 1
+//                 }
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: null,
+//                 topScore: {
+//                     $max: '$score'
+//                 }
+//             }
+//         },
+//         {
+//             $project: {
+//                 _id: false,
+//                 topScore: true
+//             }
+//         }
+//     ];
+//     return this.aggregate(aggregation);
+// };
 
 
 
