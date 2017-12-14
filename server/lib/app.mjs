@@ -21,11 +21,13 @@ if(process.env.NODE_ENV === 'production') {
 // ### Required Routes ### //
 import auth from './routes/auth';
 import game from './routes/game';
+import stats from './routes/stats';
 
 
 // ### Used Routes ### //
 app.use('/auth', auth);
 app.use('/games', game);
+app.use('/stats', stats);
 
 
 // ### Catchers ### //
