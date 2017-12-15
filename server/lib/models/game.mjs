@@ -25,7 +25,7 @@ const schema = new Schema({
         fatal: false
     }]
 }, {
-    timestamps: { timestamp: 'created_at' }
+    timestamps: { createdAt: 'timestamp' }
 });
 
 
