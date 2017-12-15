@@ -20,12 +20,14 @@ if(process.env.NODE_ENV === 'production') {
 
 // ### Required Routes ### //
 import auth from './routes/auth';
+import me from './routes/me';
 import game from './routes/game';
 import stats from './routes/stats';
 
 
 // ### Used Routes ### //
 app.use('/auth', auth);
+app.use('/me', me);
 app.use('/games', game);
 app.use('/stats', stats);
 

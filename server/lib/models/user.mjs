@@ -79,6 +79,9 @@ schema.loadClass(
                         name: '$_id',
                         count: '$count'
                     }
+                },
+                {
+                    $limit: 10
                 }
             ]);
         }
@@ -140,6 +143,9 @@ schema.loadClass(
                         difficulty: '$_id' ,
                         leaderboard: true
                     }
+                },
+                {
+                    $limit: 10
                 }
             ]);
         }
@@ -218,6 +224,9 @@ schema.loadClass(
                         difficulty: '$_id',
                         leaderboard: true
                     }
+                },
+                {
+                    $limit: 10
                 }
             ]);
         }

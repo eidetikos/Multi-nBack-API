@@ -61,17 +61,6 @@ router
                     });
             })
             .catch(next);
-    })
-
-    .get('/', ensureAuth, (req, res, next) => {
-        User.findById(req.user.id)
-            .select('-hash')
-            .lean()
-            .then(user => {
-                res.send(user);
-            })
-            .catch(next);
     });
-
-
+    
 export default router;
