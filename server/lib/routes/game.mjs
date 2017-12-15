@@ -7,7 +7,6 @@ const router = express.Router()
     .post('/', ensureAuth, (req, res, next) => {
         Game.create(modifyData(req.body))
             .then(game => {
-                console.log('GAMMEEEEEE',game); // leaving this in for now.
                 return User.findByIdAndUpdate(
                     req.user.id, 
                     { $push: { gameLog: game._id } }, 
@@ -30,8 +29,7 @@ const router = express.Router()
             .lean()
             .then(user => res.send(user.gameLog))
             .catch(next);
-    })
-;
+    });
 
 export default router;
 

@@ -15,5 +15,4 @@ router
             .catch(next);
     });
 
-
 export default router;

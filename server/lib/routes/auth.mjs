@@ -6,7 +6,7 @@ const router = express.Router();
 
 function hasUniqueNameAndPassword(req, res, next) {
     const user = req.body;
-    console.log(user);
+
     if(!user || !user.password) {
         return next({
             code: 400,

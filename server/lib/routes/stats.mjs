@@ -40,8 +40,7 @@ const router = express.Router()
                 topScore
             }))
             .catch(next);
-    })
-;
+    });
 
 export default router;
 
