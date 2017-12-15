@@ -7,16 +7,19 @@ const router = express.Router()
         const userstats = [
             User.usersSequencesCompleted(req.user.id),
             User.usersMaxN(req.user.id),
+            User.usersNBackLog(req.user.id),
             User.usersTopScore(req.user.id)
         ];
         Promise.all(userstats)
             .then( ([
                 [ { sequencesCompleted } ],
                 [ { maxN } ],
+                [ { nBackHistory } ],
                 [ { topScore } ]
             ]) => res.send({
                 sequencesCompleted,
                 maxN,
+                nBackHistory,
                 topScore
             }))
             .catch(next);

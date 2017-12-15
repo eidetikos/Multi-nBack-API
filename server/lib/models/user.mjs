@@ -343,6 +343,60 @@ schema.loadClass(
                 }
             ]);
         }
+
+        static usersNBackLog(id) {
+            console.log(id)
+            return this.aggregate([
+                
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: 'gameLog',
+                        foreignField: '_id',
+                        as: 'gameLog'
+                    }
+                }, 
+                {
+                    $unwind: '$gameLog'
+                },
+                {
+                    $unwind: '$gameLog.sequences'
+                },
+                {
+                    $match: { 'gameLog.timestamp': { $exists: true } }
+                }, 
+                {
+                    $sort: { 'gameLog.timestamp': -1 }
+                },
+                {
+                    $project: {
+                        _id: true,
+                        timestamp: '$gameLog.timestamp',
+                        nBack: '$gameLog.sequences.nBack'
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id', 
+                        nBackHistory: { $push: { nBack: '$nBack', timestamp: '$timestamp' }} 
+                    }
+                },
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(id)
+                    }
+                },
+                {
+                    $project: {
+                        _id: false,
+                        nBackHistory: true
+                    }
+                }
+
+                
+            ]);
+                
+        }
     }
 );
 
