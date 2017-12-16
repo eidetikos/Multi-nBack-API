@@ -41,7 +41,7 @@ function modifyData(game) {
 
     if(game.sequences.length === 1) return { 
         ...game,
-        avnN: 0,
+        avgN: 0,
         highN: 0
     }
 
