@@ -39,11 +39,14 @@ export default router;
 // Calculates avgN and highestN back, and sets their prop with the new calculated data
 function modifyData(game) {
 
-    const avgN = Math.floor(game.sequences.reduce((a,b) => a + b.nBack, 0) / game.sequences.length *100) / 100;
-    const highN = game.sequences.sort((a,b) => b.nBack - a.nBack);
-    
-    game.avgN = avgN;
-    game.highN = highN[0].nBack;
+    if(game.sequences.length === 1) return { 
+        ...game,
+        avgN: 0,
+        highN: 0
+    }
 
-    return game;
+    const avgN = Math.floor(game.sequences.slice(0, -1).reduce((a,b) => a + b.nBack, 0) / (game.sequences.length - 1) *100) / 100;
+    const highN = game.sequences.slice(0, -1).sort((a,b) => b.nBack - a.nBack)[0].nBack;
+
+    return { ...game, avgN, highN };
 }

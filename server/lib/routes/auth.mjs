@@ -4,7 +4,7 @@ import ensureAuth from '../utils/ensure-auth';
 import express from 'express';
 const router = express.Router();
 
-function hasUniqueNameAndPassword(req, res, next) {
+function hasRequiredFields(req, res, next) {
     const user = req.body;
 
     if(!user || !user.password) {
@@ -21,7 +21,7 @@ router
         res.send({ verified: true });
     })
 
-    .post('/signup', hasUniqueNameAndPassword, (req, res, next) => {
+    .post('/signup', hasRequiredFields, (req, res, next) => {
         const { name, password } = req.body;
         delete req.body.password;
 
@@ -42,7 +42,7 @@ router
             .catch(next);
     })
 
-    .post('/signin', hasUniqueNameAndPassword, (req, res, next) => {
+    .post('/signin', hasRequiredFields, (req, res, next) => {
         const { name, password } = req.body;
         delete req.body.password;
 
