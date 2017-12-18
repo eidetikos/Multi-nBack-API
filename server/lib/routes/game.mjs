@@ -43,7 +43,7 @@ function modifyData(game) {
         ...game,
         avgN: 0,
         highN: 0
-    }
+    };
 
     const avgN = Math.floor(game.sequences.slice(0, -1).reduce((a,b) => a + b.nBack, 0) / (game.sequences.length - 1) *100) / 100;
     const highN = game.sequences.slice(0, -1).sort((a,b) => b.nBack - a.nBack)[0].nBack;
