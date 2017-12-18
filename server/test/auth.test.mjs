@@ -53,11 +53,12 @@ describe('Auth TESTS', () => {
             .then(() => chai.assert.ok(1));
     });
 
-    it.skip('gets a user by id', () => {
+    it('gets a user by id', () => {
         return request
-            .get('/auth')
+            .get('/auth/verify')
             .set('Authorization', token)
             .then(body => {
+                console.log('is this working',body);
                 chai.assert.equal(body._id, token.id);
             });
     });
