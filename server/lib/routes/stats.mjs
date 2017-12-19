@@ -23,7 +23,8 @@ const router = express.Router()
             })
             .catch(next);
     })
-    .get('/personal', ensureAuth, (req, res, next) => {
+    // or move to "/me/stats"...
+    .get('/me', ensureAuth, (req, res, next) => {
         const userstats = [
             User.usersSequencesCompleted(req.user.id),
             User.usersMaxN(req.user.id),
@@ -44,7 +45,7 @@ const router = express.Router()
 
 export default router;
 
-
+// I think you can do this with the aggregation pipeline
 function mapLeaderboardArrayToObject(leaderboards) {
     const tempLeaderboards = [ ...leaderboards ];
     leaderboards = {};

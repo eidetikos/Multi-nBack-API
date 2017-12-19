@@ -23,8 +23,10 @@ describe('Auth TESTS', () => {
         return request
             .post('/auth/signup')
             .send({ name: 'johnny', password: 'please' })
-            .then(() => { throw new Error('Name already in use'); },
-                err => { chai.assert.equal(err.status, 400); });
+            .then(
+                () => { throw new Error('Unexpected successful response, expected 400 Bad Request'); },
+                err => chai.assert.equal(err.status, 400)
+            );
     });
 
     it('tests signin with same credentials', () => {
@@ -40,26 +42,28 @@ describe('Auth TESTS', () => {
         return request
             .post('/auth/signin')
             .send({ name: 'johnny', password: 'baaad' })
-            .then(() => { throw new Error('Unexpected successful response'); },
-                err => {
-                    chai.assert.equal(err.status, 401);
-                });
+            .then(
+                () => { throw new Error('Unexpected successful response'); },
+                err => chai.assert.equal(err.status, 401)
+            );
     });
 
-    it('gets payload', () => {
+    it('verify token', () => {
         return request
             .get('/auth/verify')
-            .set('Authorization', token)
-            .then(() => chai.assert.ok(1));
+            .set('Authorization', token);
+        // this doesn't add anything, just return the promise
+        // .then(() => chai.assert.ok(1));
     });
-
-    it('gets a user by id', () => {
-        return request
-            .get('/auth/verify')
-            .set('Authorization', token)
-            .then(body => {
-                console.log('is this working',body);
-                chai.assert.equal(body._id, token.id);
-            });
-    });
+    
+    // this test doesn't make any sense, not testing anything that wasn't covered in prior test.
+    // There's no id on response or on token
+    // it('gets a user by id', () => {
+    //     return request
+    //         .get('/auth/verify')
+    //         .set('Authorization', token)
+    //         .then(({ body }) => {
+    //             chai.assert.equal(body._id, token.id);
+    //         });
+    // });
 });

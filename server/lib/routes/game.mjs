@@ -17,11 +17,15 @@ const router = express.Router()
             })
             .catch(next);
     })
-    .get('/all', (req, res, next) => {
+    // don't put "all", a GET to route "/games" means all the games 
+    .get('/', (req, res, next) => {
         Game.find()
+            .lean()
             .then(games => res.send(games))
             .catch(next);
     })
+    // doesn't make sense, "/games/users" returns authed users game log???
+    // probably should be moved to "/me/games"
     .get('/users', ensureAuth, (req, res, next) => {
         User.findById(req.user.id)
             .populate('gameLog')
@@ -33,6 +37,7 @@ const router = express.Router()
 
 export default router;
 
+// Move this to the Game model!
 
 // Helper function: 
 // changes difficulty prop to display corresponding string instead of object
