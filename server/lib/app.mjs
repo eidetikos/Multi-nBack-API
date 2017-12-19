@@ -24,6 +24,12 @@ import me from './routes/me';
 import game from './routes/game';
 import stats from './routes/stats';
 
+// You want this one before the routes,
+// otherwise they will run and the checkDb won't happen.
+// Also, it usually only needs to be run in development mode:
+if(process.env.NODE_ENV !== 'production') {
+    app.use(checkDb());
+}
 
 // ### Used Routes ### //
 app.use('/auth', auth);
@@ -33,7 +39,6 @@ app.use('/stats', stats);
 
 
 // ### Catchers ### //
-app.use(checkDb());
 app.use(errorHandler());
 
 export default app;

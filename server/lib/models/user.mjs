@@ -21,9 +21,9 @@ const schema = new Schema({
         gender: String
     }
 });
+
 schema.loadClass(
     class {
-        
         generateHash(password) {
             this.hash = bcrypt.hashSync(password, 7);
         }

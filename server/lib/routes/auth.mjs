@@ -4,10 +4,11 @@ import ensureAuth from '../utils/ensure-auth';
 import express from 'express';
 const router = express.Router();
 
+// Glad this got renamed, but needs to check name as well!
 function hasRequiredFields(req, res, next) {
     const user = req.body;
 
-    if(!user || !user.password) {
+    if(!user || !user.password || !user.name) {
         return next({
             code: 400,
             error: 'Name and password are required'
@@ -47,6 +48,8 @@ router
         delete req.body.password;
 
         User.findOne({ name })
+            .select('-hash')
+            .lean()
             .then(user => {
                 if(!user || !user.comparePassword(password)) {
                     throw { code: 401, error: 'Invalid Login' };
@@ -55,10 +58,7 @@ router
             })
             .then(user => {
                 return tokenService.sign(user)
-                    .then(token => {
-                        user.hash = null;
-                        res.send({ token, user });
-                    });
+                    .then(token => res.send({ token, user }));
             })
             .catch(next);
     });
